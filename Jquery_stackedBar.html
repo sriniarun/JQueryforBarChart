@@ -26,25 +26,25 @@
 	    data[parseInt(obj.Year)-1960] = [];
 	  } else {
 	    if(obj.IndicatorCode==="SP.RUR.TOTL") {
-	      if(data[parseInt(obj.Year)-1960][0]==null) {
-	        data[parseInt(obj.Year)-1960][0] = {"Year":obj.Year, "Value":parseInt(obj.Value), "Color":"Red", "Region":"Rural"};
+	      if(data[parseInt(obj.Year)-1960][1]==null) {
+	        data[parseInt(obj.Year)-1960][1] = {"Year":obj.Year, "Value":parseInt(obj.Value), "Color":"Red", "Region":"Rural"};
 	      } else {
-	        data[parseInt(obj.Year)-1960][0].Value += parseInt(obj.Value);
+	        data[parseInt(obj.Year)-1960][1].Value += parseInt(obj.Value);
 	      }
 	    }
 	    if(obj.IndicatorCode==="SP.URB.TOTL") {
-	      if(data[parseInt(obj.Year)-1960][1]==null) {
-	        data[parseInt(obj.Year)-1960][1] = {"Year":obj.Year, "Value":parseInt(obj.Value), "Color":"Blue", "Region":"Urban"};
+	      if(data[parseInt(obj.Year)-1960][0]==null) {
+	        data[parseInt(obj.Year)-1960][0] = {"Year":obj.Year, "Value":parseInt(obj.Value), "Color":"Blue", "Region":"Urban"};
 	      } else {
-	        data[parseInt(obj.Year)-1960][1].Value += parseInt(obj.Value);
+	        data[parseInt(obj.Year)-1960][0].Value += parseInt(obj.Value);
 	      }
 	    }
 	  }
 	}
 
 	for(var i=0;i<data.length;i++) {
-	  data[i][0].Total = parseInt(data[i][0].Value);
-	  data[i][1].Total = parseInt(data[i][0].Value) + parseInt(data[i][1].Value);
+	  data[i][1].Total = parseInt(data[i][1].Value);
+	  data[i][0].Total = parseInt(data[i][1].Value) + parseInt(data[i][0].Value);
 	}
 
 	var rects = [];
@@ -119,10 +119,11 @@ function stackedbar(rects) {
       .attr("x", function(d) { return 250+((parseInt(d.Year)-1960)*(900/55)); })
       .attr("width", (900/55))
       .attr("y", function(d) { return 600-((d.Total/4000000000)*600)+10; })
-      .attr("height", function(d) { return (parseInt(d.Value)/4000000000)*600; })
+      .attr("height", function(d) { return (parseInt(d.Total)/4000000000)*600; })
       .attr("stroke", "black")
       .attr("stroke-width", 0.5)
       .style("fill", function(d) { return d.Color; })
+      .style("float", "left")
       ;
 }	
 	
@@ -132,7 +133,7 @@ function stackedbar(rects) {
 			var regionIndexVal = $(btndel).closest("tr").children("td").slice(0,3).text();
 			$(btndel).closest("tr").remove();
 			for(var i=0;i<rects.length;i++){
-				if(rects[i].Year == yearIndexVal ) {
+				if(rects[i].Year == yearIndexVal && (regionIndexVal.indexOf(rects[i].Region)!=-1) ) {
 					 rects.splice(i,1);
 				}
 			}
